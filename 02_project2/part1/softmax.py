@@ -32,7 +32,7 @@ def compute_probabilities(X, theta, temp_parameter):
         H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labeled as j
     """
     #YOUR CODE HERE
-    H = np.empty([theta.shape[0], X.shape[0]])
+   
     product = np.dot(theta,  np.transpose(X))/temp_parameter
     c = np.max(product, axis=0)
     diff = product - c
@@ -94,10 +94,14 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
     #YOUR CODE HERE
-    print([1] * X.shape[0])
-    print(Y, range(X.shape[0]))
-    M = sparse.coo_matrix(([1]*X.shape[0], (Y, range(X.shape[0]))), shape = (theta.shape[0],X.shape[0])).toarray()
-    print(M)
+    k = theta.shape[0]
+    n = X.shape[0]
+    M = sparse.coo_matrix(([1]*n, (Y, range(n))), shape = (k,n)).toarray()
+    prob = compute_probabilities(X, theta, temp_parameter)
+    
+    theta_change = (-1/ (temp_parameter * n)) * np.dot((M-prob), X) + lambda_factor*theta  
+    new_theta = theta - alpha * theta_change
+    return new_theta
     raise NotImplementedError
 
 def update_y(train_y, test_y):
@@ -118,25 +122,13 @@ def update_y(train_y, test_y):
                     for each datapoint in the test set
     """
     #YOUR CODE HERE
+    
+    train_y_mod3 = np.mod(train_y, 3)
+    test_y_mod3 = np.mod(test_y, 3)
+
+    return train_y_mod3, test_y_mod3
     raise NotImplementedError
-
-def compute_test_error_mod3(X, Y, theta, temp_parameter):
-    """
-    Returns the error of these new labels when the classifier predicts the digit. (mod 3)
-
-    Args:
-        X - (n, d - 1) NumPy array (n datapoints each with d - 1 features)
-        Y - (n, ) NumPy array containing the labels (a number from 0-2) for each
-            data point
-        theta - (k, d) NumPy array, where row j represents the parameters of our
-                model for label j
-        temp_parameter - the temperature parameter of softmax function (scalar)
-
-    Returns:
-        test_error - the error rate of the classifier (scalar)
-    """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    
 
 def softmax_regression(X, Y, temp_parameter, alpha, lambda_factor, k, num_iterations):
     """
@@ -185,6 +177,7 @@ def get_classification(X, theta, temp_parameter):
     probabilities = compute_probabilities(X, theta, temp_parameter)
     return np.argmax(probabilities, axis = 0)
 
+
 def plot_cost_function_over_time(cost_function_history):
     plt.plot(range(len(cost_function_history)), cost_function_history)
     plt.ylabel('Cost Function')
@@ -192,6 +185,41 @@ def plot_cost_function_over_time(cost_function_history):
     plt.show()
 
 def compute_test_error(X, Y, theta, temp_parameter):
+    error_count = 0
+    assigned_labels = get_classification(X, theta, temp_parameter)
+    return 1 - np.mean(np.mod(assigned_labels, 3) == Y)
+
+
+def compute_test_error_mod3(X, Y, theta, temp_parameter):
+    """
+    Returns the error of these new labels when the classifier predicts the digit. (mod 3)
+
+    Args:
+        X - (n, d - 1) NumPy array (n datapoints each with d - 1 features)
+        Y - (n, ) NumPy array containing the labels (a number from 0-2) for each
+            data point
+        theta - (k, d) NumPy array, where row j represents the parameters of our
+                model for label j
+        temp_parameter - the temperature parameter of softmax function (scalar)
+
+    Returns:
+        test_error - the error rate of the classifier (scalar)
+    """
+    #YOUR CODE HERE
     error_count = 0.
     assigned_labels = get_classification(X, theta, temp_parameter)
-    return 1 - np.mean(assigned_labels == Y)
+    return 1 - np.mean(np.mod(assigned_labels,3) == Y)
+    raise NotImplementedError
+    
+# Y = np.array([0, 2, 2, 0, 0])
+# X = np.array([[ 1.27367848,  0.37923662, -1.22254643],
+#  [ 0.28019327,  2.1748027,  -0.69090946],
+#  [ 2.50635565, -0.59424459,  0.67719337],
+#  [ 0.10328479, -0.26440732, -0.28889834],
+#  [-1.15044639, -0.26666002, -1.09954987]])
+# theta = 0
+# temp_parameter = 0
+
+# # Error: 0.4
+# result = compute_test_error_mod3(X, Y, theta, temp_parameter)
+# print(result)

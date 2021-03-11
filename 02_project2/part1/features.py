@@ -16,6 +16,17 @@ def project_onto_PC(X, pcs, n_components, feature_means):
     #       of the eigenvectors returned by principal_components().
     #       Note that each eigenvector is already be a unit-vector,
     #       so the projection may be done using matrix multiplication.
+    
+    print(X)
+    print(pcs)
+    print(n_components)
+    print(feature_means)
+    X_centered = X - feature_means
+    V = np.cov(X_centered)
+    values, vectors = np.linalg.eig(V)
+    print(values)
+    print(vectors)
+    # print(V)
     raise NotImplementedError
 
 
