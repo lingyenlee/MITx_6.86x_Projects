@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from utils import *
 
 def project_onto_PC(X, pcs, n_components, feature_means):
     """
@@ -17,16 +17,15 @@ def project_onto_PC(X, pcs, n_components, feature_means):
     #       Note that each eigenvector is already be a unit-vector,
     #       so the projection may be done using matrix multiplication.
     
-    print(X)
-    print(pcs)
-    print(n_components)
-    print(feature_means)
+   
     X_centered = X - feature_means
-    V = np.cov(X_centered)
-    values, vectors = np.linalg.eig(V)
-    print(values)
-    print(vectors)
-    # print(V)
+    projection = np.dot(X_centered, pcs)
+    P = projection[:, :n_components]
+    return P
+    # V = np.cov(X_centered)
+    # values, vectors = np.linalg.eig(V)
+
+
     raise NotImplementedError
 
 
@@ -131,8 +130,8 @@ def principal_components(centered_data):
     idx = eigen_values.argsort()[::-1]
     eigen_values = eigen_values[idx]
     eigen_vectors = eigen_vectors[:, idx]
-    return eigen_vectors
 
+    return eigen_vectors
 
 ###Correction note:  Differing from the release, this function takes an extra input feature_means.
 

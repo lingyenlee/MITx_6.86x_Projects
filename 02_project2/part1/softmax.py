@@ -187,7 +187,7 @@ def plot_cost_function_over_time(cost_function_history):
 def compute_test_error(X, Y, theta, temp_parameter):
     error_count = 0
     assigned_labels = get_classification(X, theta, temp_parameter)
-    return 1 - np.mean(np.mod(assigned_labels, 3) == Y)
+    return 1 - np.mean(assigned_labels == Y)
 
 
 def compute_test_error_mod3(X, Y, theta, temp_parameter):
